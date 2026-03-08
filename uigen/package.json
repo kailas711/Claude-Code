@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "set NODE_OPTIONS=--require ./node-compat.cjs && next dev --turbopack",
+    "dev": "set NODE_OPTIONS=--require ./node-compat.cjs && next dev",
     "dev:daemon": "NODE_OPTIONS='--require ./node-compat.cjs' next dev --turbopack > logs.txt 2>&1 & echo 'Server started, writing logs to logs.txt'",
     "build": "NODE_OPTIONS='--require ./node-compat.cjs' next build",
     "start": "NODE_OPTIONS='--require ./node-compat.cjs' next start",
@@ -33,6 +33,7 @@
     "jose": "^6.0.11",
     "lucide-react": "^0.517.0",
     "next": "15.3.3",
+    "ollama-ai-provider": "^1.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",
@@ -57,7 +58,7 @@
     "prisma": "^6.10.1",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.4",
-    "typescript": "^5",
+    "typescript": "5.9.3",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
   }

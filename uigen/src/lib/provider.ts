@@ -1,4 +1,5 @@
 import { anthropic } from "@ai-sdk/anthropic";
+import { createOllama } from "ollama-ai-provider";
 import {
   LanguageModelV1,
   LanguageModelV1StreamPart,
@@ -507,8 +508,15 @@ export default function App() {
 }
 
 export function getLanguageModel() {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const ollamaModel = process.env.OLLAMA_MODEL;
+  if (ollamaModel && ollamaModel.trim() !== "") {
+    const baseURL = process.env.OLLAMA_BASE_URL || "http://localhost:11434/api";
+    const ollama = createOllama({ baseURL });
+    console.log(`Using Ollama model: ${ollamaModel} at ${baseURL}`);
+    return ollama(ollamaModel);
+  }
 
+  const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey || apiKey.trim() === "") {
     console.log("No ANTHROPIC_API_KEY found, using mock provider");
     return new MockLanguageModel("mock-claude-sonnet-4-0");
