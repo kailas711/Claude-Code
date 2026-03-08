@@ -31,6 +31,11 @@ export async function POST(req: Request) {
   const model = getLanguageModel();
   // Use fewer steps for mock provider to prevent repetition
   const isMockProvider = !process.env.ANTHROPIC_API_KEY && !process.env.OLLAMA_MODEL;
+  const tools = {
+    str_replace_editor: buildStrReplaceTool(fileSystem),
+    file_manager: buildFileManagerTool(fileSystem),
+  };
+
   const result = streamText({
     model,
     messages,
@@ -39,9 +44,17 @@ export async function POST(req: Request) {
     onError: (err: any) => {
       console.error(err);
     },
-    tools: {
-      str_replace_editor: buildStrReplaceTool(fileSystem),
-      file_manager: buildFileManagerTool(fileSystem),
+    tools,
+    experimental_repairToolCall: async ({ toolCall, tools }) => {
+      if (toolCall.toolName in tools) return toolCall;
+      const nameLower = toolCall.toolName.toLowerCase();
+      if (nameLower.includes("str") || nameLower.includes("file") || nameLower.includes("edit") || nameLower.includes("create")) {
+        return { ...toolCall, toolName: "str_replace_editor" };
+      }
+      if (nameLower.includes("manager") || nameLower.includes("rename") || nameLower.includes("delete")) {
+        return { ...toolCall, toolName: "file_manager" };
+      }
+      return null;
     },
     onFinish: async ({ response }) => {
       // Save to project if projectId is provided and user is authenticated
